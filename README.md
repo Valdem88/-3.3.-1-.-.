@@ -2,7 +2,9 @@
 
 #### 1. Какой системный вызов делает команда `cd`? В прошлом ДЗ мы выяснили, что `cd` не является самостоятельной  программой, это `shell builtin`, поэтому запустить `strace` непосредственно на `cd` не получится. Тем не менее, вы можете запустить `strace` на `/bin/bash -c 'cd /tmp'`. В этом случае вы увидите полный список системных вызовов, которые делает сам `bash` при старте. Вам нужно найти тот единственный, который относится именно к `cd`. Обратите внимание, что `strace` выдаёт результат своей работы в поток stderr, а не в stdout.
 Решение 
-
+```bash
+chdir("/tmp") = 0
+```
 chdir — системная функция (системный вызов). Используется для изменения текущего рабочего каталога.
 ```bash
 [root@Git-SentOS-8 tmp]# strace -o cd_log /bin/bash -c 'cd /tmp' && grep tmp cd_log
@@ -12,16 +14,18 @@ stat("/tmp", {st_mode=S_IFDIR|S_ISVTX|0777, st_size=4096, ...}) = 0
 stat("/tmp", {st_mode=S_IFDIR|S_ISVTX|0777, st_size=4096, ...}) = 0
 chdir("/tmp")                           = 0
 ```
-
+```bash
+chdir("/tmp") = 0
+```
 #### 2. Попробуйте использовать команду `file` на объекты разных типов на файловой системе. Например:
-    ```bash
+```bash
     vagrant@netology1:~$ file /dev/tty
     /dev/tty: character special (5/0)
     vagrant@netology1:~$ file /dev/sda
     /dev/sda: block special (8/0)
     vagrant@netology1:~$ file /bin/bash
     /bin/bash: ELF 64-bit LSB shared object, x86-64
-    ```
+```
     Используя `strace` выясните, где находится база данных `file` на основании которой она делает свои догадки.
 Решение 
 ```bash
@@ -198,12 +202,12 @@ Linux version 4.18.0-365.el8.x86_64 (mockbuild@kbuilder.bsys.centos.org) (gcc ve
 - Из man 2 uname: Part of the utsname information is also accessible via /proc/sys/kernel/{ostype, hostname, osrelease, version, domainname}.
 
 #### 7. Чем отличается последовательность команд через `;` и через `&&` в bash? Например:
-    ```bash
+```bash
     root@netology1:~# test -d /tmp/some_dir; echo Hi
     Hi
     root@netology1:~# test -d /tmp/some_dir && echo Hi
     root@netology1:~#
-    ```
+```
     Есть ли смысл использовать в bash `&&`, если применить `set -e`?
 
 Решение
